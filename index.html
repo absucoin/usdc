@@ -140,21 +140,102 @@
   </div>
 <!-- Token Details -->
   <div style="display:flex; gap:30px; margin-top:10px; font-size:14px; color:#00ff66; text-shadow:0 0 5px #00ff66;">
-    <div><strong>CA:</strong> TBA</div>
-    <div><strong>MarketCap:</strong> NA</div>
-    <div><strong>Volume:</strong> NA</div>
+    <div><strong>CA:</strong> HymWJc3YxwuNuus8Sk8jFUmYWxwmoi8h4sbJdRTMfahF</div>
+    <div><strong>MarketCap:</strong> $34k</div>
+    <div><strong>Volume:</strong> $945K</div>
   </div>
   <!-- LIVE Indicator -->
   <div style="display:flex; align-items:center; gap:8px; margin-top:10px; font-size:14px;">
     <span style="width:10px; height:10px; border-radius:50%; background-color:#00ff9f; box-shadow:0 0 10px #00ff9f; animation:pulse 1s infinite;"></span>
-    <span style="color:#00ffcc;">● STOP</span>
+    <span style="color:#00ffcc;">● LIVE</span>
   </div>
 
   <!-- Total Sent Tracker -->
   <div style="margin-top:10px; font-size:14px; color:#88ffcc;">
     Total $SOL Sent: <span id="total-sol">0.0000</span>
   </div>
+<!-- Leaderboard -->
+  <div style="margin-top:20px; font-size:14px;">
+    <strong style="color:#ff00cc;">Top Wallets</strong>
+    <ul id="leaderboard" style="list-style:none; padding-left:0; margin-top:10px; color:#ffccff;"></ul>
+  </div>
+  <!-- Live Feed -->
+  <div id="sol-feed" style="margin-top:20px; font-size:14px; height:300px; overflow-y:auto; border:1px solid #00ffcc; padding:10px; background-color:#010101;"></div>
 
+  
+
+  <!-- Sound -->
+  <audio id="beep-sound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
+
+  <!-- Script -->
+  <script>
+    (function(){
+      const wallets = Array.from({ length: 50 }, () =>
+        [...Array(44)].map(() => '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'[Math.floor(Math.random() * 58)]).join('')
+      );
+      const leaderboard = {};
+      let totalSent = 0;
+      const feed = document.getElementById('sol-feed');
+      const totalSol = document.getElementById('total-sol');
+      const leaderboardList = document.getElementById('leaderboard');
+      const beep = document.getElementById('beep-sound');
+
+      function getRandomSol() {
+        const sol = Math.random() * (1.23 - 0.00023) + 0.0023;
+        return parseFloat(sol.toFixed(4));
+      }
+
+      function getRandomWallet() {
+        return wallets[Math.floor(Math.random() * wallets.length)];
+      }
+
+      function updateLeaderboard(wallet, amount) {
+        leaderboard[wallet] = (leaderboard[wallet] || 0) + amount;
+        const sorted = Object.entries(leaderboard).sort((a, b) => b[1] - a[1]).slice(0, 5);
+        leaderboardList.innerHTML = '';
+        sorted.forEach(([w, amt]) => {
+          const li = document.createElement('li');
+          li.textContent = `${w.slice(0, 6)}...${w.slice(-4)}: ${amt.toFixed(4)} SOL`;
+          leaderboardList.appendChild(li);
+        });
+      }
+
+      function addLine() {
+        const sol = getRandomSol();
+        const wallet = getRandomWallet();
+
+        const line = document.createElement('div');
+        line.style.animation = 'fadeIn 0.3s ease-in';
+        line.textContent = `⚡ Sent $SOL ${sol} → ${wallet}`;
+        feed.appendChild(line);
+
+        // Update total
+        totalSent += sol;
+        totalSol.textContent = totalSent.toFixed(4);
+
+        // Update leaderboard
+        updateLeaderboard(wallet, sol);
+
+        // Sound
+        beep.currentTime = 0;
+        beep.play();
+
+        // Auto-scroll
+        feed.scrollTop = feed.scrollHeight;
+
+        // Limit feed size
+        if (feed.childNodes.length > 100) {
+          feed.removeChild(feed.firstChild);
+        }
+
+        // Next
+        const nextDelay = Math.floor(Math.random() * 12 + 1) * 1000;
+        setTimeout(addLine, nextDelay);
+      }
+
+      addLine();
+    })();
+  </script>
 
   <!-- Styles -->
   <style>
@@ -341,7 +422,7 @@
                 <div class="item">Search</div>
             </div>
             <div class="content">
-                <textarea>CA : SOON</textarea>
+                <textarea>CA : HymWJc3YxwuNuus8Sk8jFUmYWxwmoi8h4sbJdRTMfahF</textarea>
             </div>
         </div>
 		
